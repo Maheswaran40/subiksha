@@ -1,46 +1,330 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-      crossorigin="anonymous"
-    />
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-      crossorigin="anonymous"
-    ></script>
-  </head>
-  <body>
-    <h1>Welcome to Home page</h1>
-    <button class="btn btn-info" data-bs-toggle="offcanvas" data-bs-target="#searchCanvas">Search</button>
-    <!--all products -->
-    <div class="row" id="allproduct"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elegant Store · Home</title>
+  <!-- Bootstrap 5 + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <!-- Google Font (optional) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet" />
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #f8fafc; padding: 1.5rem; }
+    .brand-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    .brand-header h1 {
+      font-weight: 600;
+      color: #0b2b40;
+      letter-spacing: -0.5px;
+    }
+    .action-buttons .btn {
+      border-radius: 50px;
+      padding: 0.5rem 1.5rem;
+      font-weight: 500;
+      margin-left: 0.5rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.02);
+      transition: 0.2s;
+    }
+    .action-buttons .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+    }
+    .product-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.2rem 0.8rem 1.2rem 0.8rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+      transition: 0.25s ease;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: 1px solid rgba(0,0,0,0.02);
+    }
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 18px 36px rgba(0, 20, 30, 0.08);
+      border-color: #d0e2ed;
+    }
+    .product-card img {
+      max-height: 160px;
+      width: auto;
+      object-fit: contain;
+      margin-bottom: 0.5rem;
+    }
+    .product-card .product-name {
+      font-weight: 600;
+      color: #1e2f3a;
+      font-size: 1.1rem;
+    }
+    .product-card .product-price {
+      color: #2c7a5a;
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin: 0.2rem 0 0.5rem;
+    }
+    .product-card .btn-group-card {
+      display: flex;
+      gap: 6px;
+      width: 100%;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .product-card .btn-group-card .btn {
+      border-radius: 40px;
+      font-size: 0.8rem;
+      padding: 0.4rem 1rem;
+      flex: 1 0 auto;
+      max-width: 100px;
+    }
+    .offcanvas {
+      background: #ffffffec;
+      backdrop-filter: blur(4px);
+      border-radius: 0 0 2rem 2rem;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+    }
+    .offcanvas-top { height: 480px; }
+    .offcanvas-header { border-bottom: 1px solid #eef3f7; }
+    .wishlist-badge {
+      background: #fce9e9;
+      color: #b33c3c;
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+    .cart-table td { vertical-align: middle; }
+    .cart-table img { border-radius: 16px; object-fit: cover; background: #f0f4f8; }
+    .empty-state { color: #7f8b95; font-size: 0.95rem; }
+    .footer-credit { font-size: 0.8rem; color: #9aaeb9; margin-top: 2.5rem; text-align: center; }
+  </style>
+</head>
+<body>
 
-    <!-- search canvas -->
-    <div class="offcanvas offcanvas-top" id="searchCanvas" style="height: 500px;">
-        <div class="offcanvas-header"><h2>search</h2><button class="btn btn-close" data-bs-dismiss="offcanvas"></button></div>
-        <div class="offcanvas-body">
-            <form class="input-group"  onsubmit="searchFun(event)">
-                <input type="search" placeholder="search" class="form-control" id="input">
-                <input type="submit" class="btn btn-success">
-            </form>
-            <br>
-            <div class="row" id="searchOutput">
-
-            </div>
-        </div>
+<div class="container-lg">
+  <!-- header -->
+  <div class="brand-header">
+    <h1><i class="bi bi-bag-heart-fill" style="color: #ca6f6f;"></i>  ShopVibe</h1>
+    <div class="action-buttons">
+      <button class="btn btn-outline-secondary" data-bs-toggle="offcanvas" data-bs-target="#searchCanvas"><i class="bi bi-search"></i> Search</button>
+      <button class="btn btn-outline-primary" data-bs-toggle="offcanvas" data-bs-target="#wishlistCanvas"><i class="bi bi-heart"></i> Wishlist <span class="wishlist-badge" id="wishlistCount">0</span></button>
+      <button class="btn btn-outline-success" data-bs-toggle="offcanvas" data-bs-target="#cartCanvas"><i class="bi bi-cart3"></i> Cart <span class="badge bg-success rounded-pill" id="cartCount">0</span></button>
     </div>
+  </div>
 
+  <!-- products grid -->
+  <div class="row g-4" id="allproduct"></div>
+  <div class="footer-credit"><i class="bi bi-diamond-fill" style="color: #b0c9d9; font-size: 6px;"></i>  curated with style  <i class="bi bi-diamond-fill" style="color: #b0c9d9; font-size: 6px;"></i></div>
+</div>
 
+<!-- SEARCH OFFCANVAS -->
+<div class="offcanvas offcanvas-top" id="searchCanvas" style="height: 460px;">
+  <div class="offcanvas-header">
+    <h5 class="fw-bold"><i class="bi bi-search-heart"></i>  search products</h5>
+    <button class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+    <form class="input-group" onsubmit="searchFun(event)">
+      <input type="text" class="form-control form-control-lg" placeholder="🔍 search by name or price..." id="input" />
+      <button class="btn btn-dark" type="submit"><i class="bi bi-arrow-right"></i></button>
+    </form>
+    <div class="row g-3 mt-3" id="searchOutput"></div>
+  </div>
+</div>
+<!-- WISHLIST OFFCANVAS -->
+<div class="offcanvas offcanvas-top" id="wishlistCanvas" style="height: 460px;">
+  <div class="offcanvas-header">
+    <h5 class="fw-bold"><i class="bi bi-heart-fill" style="color: #d65a5a;"></i>  wishlist</h5>
+    <button class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="row g-3" id="wishlistOutput"></div>
+    <div id="emptyWishlistMsg" class="empty-state mt-3 text-center">✨ your wishlist is empty</div>
+  </div>
+</div>
 
+<!-- CART OFFCANVAS -->
+<div class="offcanvas offcanvas-top" id="cartCanvas" style="height: 500px;">
+  <div class="offcanvas-header">
+    <h5 class="fw-bold"><i class="bi bi-cart-check-fill" style="color: #2c7a5a;"></i>  cart</h5>
+    <button class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+    <table class="table table-borderless cart-table">
+      <thead><tr><th>product</th><th>name</th><th>price</th><th>qty</th><th></th></tr></thead>
+      <tbody id="cartShow"></tbody>
+    </table>
+    <div id="emptyCartMsg" class="empty-state text-center mt-3">🛒 your cart is empty</div>
+  </div>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // ----- DATA -----
+  let products = [
+    { id: 1, name: "Samsung Galaxy", price: 19909, image: "../images/samsung.png" },
+    { id: 2, name: "Vivo V30", price: 12909, image: "../images/vivo.png" },
+    { id: 3, name: "iPhone 15", price: 49909, image: "../images/iphone.png" },
+    { id: 4, name: "OnePlus 12", price: 29909, image: "https://placehold.co/200x200/1f2e3a/white?text=OnePlus" },
+    { id: 5, name: "Xiaomi 14", price: 18909, image: "https://placehold.co/200x200/2b4a5a/white?text=Xiaomi" }
+  ];
 
-  </body>
-  <script src="../scripts/Home.js"></script>
+  // ----- STATE -----
+  let cart = [];
+  let wishlist = [];
+
+  // ----- RENDER PRODUCTS -----
+  function showData() {
+    let data = "";
+    products.map((v) => {
+      const inWish = wishlist.some(item => item.id === v.id);
+      data += `<div class="col-lg-3 col-md-6 col-12">
+        <div class="product-card">
+          <img src="${v.image}" alt="${v.name}" loading="lazy" />
+          <span class="product-name">${v.name}</span>
+          <span class="product-price">₹${v.price.toLocaleString()}</span>
+          <div class="btn-group-card">
+            <button class="btn btn-outline-danger btn-sm" onclick="toggleWishlist(${v.id})">
+              <i class="bi ${inWish ? 'bi-heart-fill' : 'bi-heart'}"></i>
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="cartFun(${v.id})"><i class="bi bi-cart-plus"></i></button>
+          </div>
+        </div>
+      </div>`;
+    });
+    document.getElementById("allproduct").innerHTML = data;
+    updateBadges();
+  }
+  showData();
+
+  // ----- SEARCH -----
+  function searchFun(e) {
+    e.preventDefault();
+    const query = document.getElementById("input").value.trim();
+    if (!query) { document.getElementById("searchOutput").innerHTML = ""; return; }
+    const output = products.filter(v => 
+      v.name.toLowerCase().includes(query.toLowerCase()) || 
+      v.price.toString().includes(query)
+    );
+    let html = "";
+    output.map(v => {
+      html += `<div class="col-6 col-md-4">
+        <div class="product-card p-2">
+          <img src="${v.image}" height="90" alt="" />
+          <span class="product-name" style="font-size:0.9rem;">${v.name}</span>
+          <span class="product-price" style="font-size:1rem;">₹${v.price}</span>
+        </div>
+      </div>`;
+    });
+    document.getElementById("searchOutput").innerHTML = html || `<div class="col-12 text-muted">no results</div>`;
+  }
+
+  // ----- CART -----
+  function cartFun(proID) {
+    const product = products.find(v => v.id === proID);
+    if (!product) return;
+    const existing = cart.find(v => v.id === proID);
+    if (existing) {
+      existing.quantity++;
+    } else {
+      cart.push({ ...product, quantity: 1 });
+    }
+    showCart(cart);
+    updateBadges();
+    // reopen cart canvas (optional)
+  }
+
+  function showCart(cartArr) {
+    const tbody = document.getElementById("cartShow");
+    const emptyMsg = document.getElementById("emptyCartMsg");
+    if (!cartArr.length) { tbody.innerHTML = ""; emptyMsg.style.display = "block"; return; }
+    emptyMsg.style.display = "none";
+    let rows = "";
+    cartArr.map(v => {
+      rows += `<tr>
+        <td><img src="${v.image}" height="60" width="60" alt="" /></td>
+        <td><strong>${v.name}</strong></td>
+        <td>₹${v.price}</td>
+        <td>${v.quantity}</td>
+        <td><button class="btn btn-close btn-sm" onclick="removeFun(${v.id})"></button></td>
+      </tr>`;
+    });
+    tbody.innerHTML = rows;
+    updateBadges();
+  }
+
+  function removeFun(proID) {
+    const item = cart.find(v => v.id === proID);
+    if (!item) return;
+    if (item.quantity > 1) {
+      item.quantity--;
+    } else {
+      cart = cart.filter(v => v.id !== proID);
+    }
+    showCart(cart);
+    updateBadges();
+  }
+
+  // ----- WISHLIST -----
+  function toggleWishlist(proID) {
+    const product = products.find(v => v.id === proID);
+    if (!product) return;
+    const exists = wishlist.some(v => v.id === proID);
+    if (exists) {
+      wishlist = wishlist.filter(v => v.id !== proID);
+    } else {
+      wishlist.push({ ...product });
+    }
+    showWishlist(wishlist);
+    showData();  // refresh heart icons
+    updateBadges();
+  }
+
+  function showWishlist(wishArr) {
+    const container = document.getElementById("wishlistOutput");
+    const emptyMsg = document.getElementById("emptyWishlistMsg");
+    if (!wishArr.length) { container.innerHTML = ""; emptyMsg.style.display = "block"; return; }
+    emptyMsg.style.display = "none";
+    let html = "";
+    wishArr.map(v => {
+      html += `<div class="col-6 col-md-4">
+        <div class="product-card p-2">
+          <img src="${v.image}" height="90" alt="" />
+          <span class="product-name" style="font-size:0.9rem;">${v.name}</span>
+          <span class="product-price" style="font-size:1rem;">₹${v.price}</span>
+          <button class="btn btn-outline-danger btn-sm mt-1" onclick="toggleWishlist(${v.id})"><i class="bi bi-heart-slash"></i> remove</button>
+        </div>
+      </div>`;
+    });
+    container.innerHTML = html;
+    updateBadges();
+  }
+
+  // ----- BADGES -----
+  function updateBadges() {
+    document.getElementById("cartCount").innerText = cart.reduce((acc, v) => acc + v.quantity, 0);
+    document.getElementById("wishlistCount").innerText = wishlist.length;
+  }
+
+  // initial render
+  showCart(cart);
+  showWishlist(wishlist);
+  updateBadges();
+
+  // expose to global
+  window.searchFun = searchFun;
+  window.cartFun = cartFun;
+  window.removeFun = removeFun;
+  window.toggleWishlist = toggleWishlist;
+  window.showData = showData;
+</script>
+</body>
 </html>
